@@ -69,6 +69,7 @@ const Status BufMgr::allocBuf(int & frame)
     
     // pick page currently at clock hand
     // if page is available
+    // if frame is available
     //      if page is not empty
     //          if page is dirty
     //              write back to disk
@@ -84,8 +85,18 @@ const Status BufMgr::allocBuf(int & frame)
 	
 const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
 {
-    
-
+    // 10/8 DM: pseudo code
+    // int frame number
+    // frame number = lookup(PageNo)
+    //      if OK == allocBuf()
+    //           method file->readPage(É)
+    //           insert(file, pageNo, frame number)
+    //           set()
+    //      return pointer to the frame (via page parameter).
+    // else
+    //      set refbit
+    //      increment pinCnt
+    //      return pointer to the frame (via page parameter).
 
 }
 
@@ -93,9 +104,13 @@ const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
 const Status BufMgr::unPinPage(File* file, const int PageNo, 
 			       const bool dirty) 
 {
+    // 10/8 DM: pseudo code
 
-
-
+    // find frame containing (file,PageNo)
+    // if pinCnt == 0
+    //      decrement pinCnt of the frame containing(file, PageNo)
+    //      set dirty bit
+    // return OK
 
 
 }
@@ -103,11 +118,14 @@ const Status BufMgr::unPinPage(File* file, const int PageNo,
 const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page) 
 {
 
+    // 10/8 DM: pseudo code
 
 
 
-
-
+    // if Unix error, return UNIXERR
+    // if all bufferframes pinned, return BUFFEREXCEEDED
+    // set(file, newPageNumber)
+    // return OK
 
 }
 
