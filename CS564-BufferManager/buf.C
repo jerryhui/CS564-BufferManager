@@ -191,16 +191,31 @@ const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page)
 {
     
     // 10/8 DM: pseudo code
-    
     // newPageNumber = file->allocatePage()
     // if Unix error, return UNIXERR
-    // openFrameNumber = allocBuf()
+    // find an open frame or allocate an open frame
     // if all bufferframes pinned, return BUFFEREXCEEDED
     // insert (file, newPageNumber, openFrameNumber)
     // if hashtable error, return HASHTBLERROR
-    // set(file, newPageNumber)
+    // set(file, newPageNumber)    
     // return OK
 
+    int newPageNumber;
+    if(UNIXERR == file->allocatePage(newPageNumber)){
+        return UNIXERR;
+    }
+    
+    int openFrameNo;
+    if(BUFFEREXCEEDED == allocBuf(openFrameNo)){
+        return BUFFEREXCEEDED;
+    }
+
+    if(HASHTBLERROR == bufTable->insert(file, newPageNumber, openFrameNumber)){
+        return HASHTBLERROR;
+    }
+    
+    bufTable->set(file, newPageNumber);
+    return OK;
 }
 
 const Status BufMgr::disposePage(File* file, const int pageNo) 
