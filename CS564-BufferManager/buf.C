@@ -63,22 +63,55 @@ BufMgr::~BufMgr() {
 }
 
 
+// 10/8 JH: Pseudo-code added
+// 10/10 JH:
+// - Implemented function
+// - May still need to handle errors from File::writePage()
+// - !!Bookkeeping left for those who called allocBuf to do!!
 const Status BufMgr::allocBuf(int & frame) 
 {
-    // 10/8 JH: pseudo code
+    advanceClock();
+    int startClock = clockHand; // remembers where we start
+    Status rtnStatus=OK;
     
-    // pick page currently at clock hand
-    // if frame is available
-    //      if page is not empty
-    //          if page is dirty
-    //              write back to disk
-    //              if I/O not successful return UNIXERR
-    //      set frame=page#
-    //      return OK
-    // advance clock hand till there's no page
+    do {
+        // examine page currently at clock hand
+        
+        // if frame is available, return this frame
+        if (!bufTable[clockHand].valid) {
+            frame = clockHand;
+            return OK;
+        }
+        
+        if (!bufTable[clockHand].refbit) {
+            // clear refbit
+            bufTable[clockHand].refbit = false;
+        } else {
+            if (bufTable[clockHand].pinCnt==0) {
+                // no process is referencing this page
+                
+                if (bufTable[clockHand].dirty) {
+                    // write back to disk
+                    rtnStatus = bufTable[clockHand].file->writePage(bufTable[clockHand].pageNo, &bufPool[clockHand]);
+                    
+                    // if I/O not successful return UNIXERR
+                    if (rtnStatus==UNIXERR)
+                        return UNIXERR;
+                    
+                    // JH-Note: may need to handle
+                    //      BADPAGENO or BADPAGEPTR
+                }
+                
+                frame = clockHand;
+                return OK;
+            }
+        }
+        
+        advanceClock();
+    } while (clockHand != startClock);
     
-    // if all pages are pinned
-    //  return BUFFEREXCEEDED
+    // all pages are pinned
+    return BUFFEREXCEEDED;
 }
 
 	
