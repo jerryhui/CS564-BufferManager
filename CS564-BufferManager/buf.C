@@ -164,7 +164,27 @@ const Status BufMgr::unPinPage(File* file, const int PageNo,
     // if dirty == true
     //      set dirty bit
     // return OK
-    
+
+    //Status rtnStatus = OK;
+
+    int frameNo;
+
+    if(HASHNOTFOUND == hashTable->lookup(file, PageNo, frameNo)){
+        return HASHNOTFOUND;
+    }
+
+    if (bufTable[frameNo].pinCnt <= 0){
+        return PAGENOTPINNED;
+    }
+    else{
+        bufTable[frameNo].pinCnt--;
+    }
+
+    if(dirty){
+        bufTable[frameNo].dirty = 1;
+    }
+
+    return OK;
 }
 
 const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page) 
