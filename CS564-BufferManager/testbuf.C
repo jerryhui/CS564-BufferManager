@@ -2,6 +2,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 #include "page.h"
 #include "buf.h"

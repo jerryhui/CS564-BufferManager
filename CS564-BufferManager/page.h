@@ -2,6 +2,7 @@
 #define PAGE_H
 
 #include "error.h"
+#include "string.h"
 
 struct RID{
     int  pageNo;
