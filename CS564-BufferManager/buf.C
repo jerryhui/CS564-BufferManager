@@ -181,7 +181,7 @@ const Status BufMgr::unPinPage(File* file, const int PageNo,
     }
 
     if(dirty){
-        bufTable[frameNo].dirty = 1;
+        bufTable[frameNo].dirty = true; // JH: better set bool explicitly to true/false instead
     }
 
     return OK;
