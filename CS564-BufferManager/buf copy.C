@@ -68,7 +68,7 @@ BufMgr::~BufMgr() {
 // - Implemented function
 // - May still need to handle errors from File::writePage()
 // - !!Bookkeeping left for those who called allocBuf to do!!
-const Status BufMgr::allocBuf(int & frame)
+const Status BufMgr::allocBuf(int & frame) 
 {
     advanceClock();
     int startClock = clockHand; // remembers where we start
@@ -118,12 +118,12 @@ const Status BufMgr::allocBuf(int & frame)
 const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
 {
     // 10/8 DM: pseudo code
-    
+
     // int frame number
     // frame number = lookup(PageNo)
     // if frame number == HASHNOTFOUND
     //      if OK == allocBuf()
-    //           method file->readPage(â€¦)
+    //           method file->readPage(É)
     //           insert(file, pageNo, frame number)
     //           set()
     //      return pointer to the frame (via page parameter).
@@ -131,7 +131,7 @@ const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
     //      set refbit
     //      increment pinCnt
     //      return pointer to the frame (via page parameter).
-    
+
 }
 
 
@@ -139,7 +139,7 @@ const Status BufMgr::unPinPage(File* file, const int PageNo,
 			       const bool dirty) 
 {
     // 10/8 DM: pseudo code
-    
+
     // find frame containing (file,PageNo)
     // if not found
     //      return HASHNOTFOUND
@@ -150,14 +150,15 @@ const Status BufMgr::unPinPage(File* file, const int PageNo,
     // if dirty == true
     //      set dirty bit
     // return OK
-    
+
+
 }
 
 const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page) 
 {
-    
+
     // 10/8 DM: pseudo code
-    
+
     // newPageNumber = file->allocatePage()
     // if Unix error, return UNIXERR
     // openFrameNumber = allocBuf()
@@ -166,7 +167,7 @@ const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page)
     // if hashtable error, return HASHTBLERROR
     // set(file, newPageNumber)
     // return OK
-    
+
 }
 
 const Status BufMgr::disposePage(File* file, const int pageNo) 
