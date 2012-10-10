@@ -178,7 +178,10 @@ const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page)
 
     // 10/8 DM: pseudo code
 
-    // newPageNumber = file->allocatePage()
+    int newPageNumber;
+    //allocate a new page using the DB function "allocatePage"
+    newPageNumber = file->allocatePage(newPageNumber);
+    
     // if Unix error, return UNIXERR
     // openFrameNumber = allocBuf()
     // if all bufferframes pinned, return BUFFEREXCEEDED
