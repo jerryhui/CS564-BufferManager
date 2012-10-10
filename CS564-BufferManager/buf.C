@@ -80,6 +80,7 @@ const Status BufMgr::allocBuf(int & frame)
         // if frame is available, return this frame
         if (!bufTable[clockHand].valid) {
             frame = clockHand;
+            bufTable[frame].Clear();
             return OK;
         }
         
@@ -103,6 +104,7 @@ const Status BufMgr::allocBuf(int & frame)
                 }
                 
                 frame = clockHand;
+                bufTable[frame].Clear();
                 return OK;
             }
         }

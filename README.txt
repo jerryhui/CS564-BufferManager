@@ -5,4 +5,4 @@ JH: Files copied from CS564-1 directory.
 DM: Pseudo code for the four functions.
 
 10/10/2012
-JH: Posted to GitHub.
+JH: Posted to GitHub. Implemented BufMgr::allocBuf() and BufMgr::readPage().
