@@ -114,24 +114,36 @@ const Status BufMgr::allocBuf(int & frame)
     return BUFFEREXCEEDED;
 }
 
-	
+
+// 10/8 DM: pseudo code
+// 10/10 JH: implemented function
 const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
 {
-    // 10/8 DM: pseudo code
-    
-    // int frame number
-    // frame number = lookup(PageNo)
-    // if frame number == HASHNOTFOUND
-    //      if OK == allocBuf()
-    //           method file->readPage(…)
-    //           insert(file, pageNo, frame number)
-    //           set()
-    //      return pointer to the frame (via page parameter).
-    // else
-    //      set refbit
-    //      increment pinCnt
-    //      return pointer to the frame (via page parameter).
-    
+    int frameNo;
+    Status rtn=OK;
+
+    if (hashTable->lookup(file, PageNo, frameNo) == OK) {
+        // page is already in buffer
+        
+        bufTable[frameNo].pinCnt++;
+        bufTable[frameNo].refbit = true;
+
+        page = &bufPool[frameNo];
+    } else {
+        // page is not in the buffer
+        
+        rtn = allocBuf(frameNo);
+        if (rtn == OK) {
+            if (file->readPage(PageNo, &bufPool[frameNo])==OK) {
+                hashTable->insert(file, PageNo, frameNo);
+                bufTable[frameNo].Set(file, PageNo);
+                
+                page = &bufPool[frameNo];
+            }
+        }
+    }
+
+    return rtn;
 }
 
 
@@ -166,7 +178,7 @@ const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page)
     // if hashtable error, return HASHTBLERROR
     // set(file, newPageNumber)
     // return OK
-    
+
 }
 
 const Status BufMgr::disposePage(File* file, const int pageNo) 
