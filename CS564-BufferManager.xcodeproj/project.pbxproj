@@ -7,8 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8F4394F71623782C008296CC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4394F61623782C008296CC /* main.cpp */; };
 		8F4394F91623782D008296CC /* CS564_BufferManager.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8F4394F81623782D008296CC /* CS564_BufferManager.1 */; };
+		8F43951E162378A8008296CC /* buf.C in Sources */ = {isa = PBXBuildFile; fileRef = 8F439513162378A8008296CC /* buf.C */; };
+		8F43951F162378A8008296CC /* bufHash.C in Sources */ = {isa = PBXBuildFile; fileRef = 8F439515162378A8008296CC /* bufHash.C */; };
+		8F439520162378A8008296CC /* db.C in Sources */ = {isa = PBXBuildFile; fileRef = 8F439516162378A8008296CC /* db.C */; };
+		8F439521162378A8008296CC /* error.C in Sources */ = {isa = PBXBuildFile; fileRef = 8F439518162378A8008296CC /* error.C */; };
+		8F439522162378A8008296CC /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = 8F43951A162378A8008296CC /* makefile */; };
+		8F439523162378A8008296CC /* page.C in Sources */ = {isa = PBXBuildFile; fileRef = 8F43951B162378A8008296CC /* page.C */; };
+		8F439524162378A8008296CC /* testbuf.C in Sources */ = {isa = PBXBuildFile; fileRef = 8F43951D162378A8008296CC /* testbuf.C */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,8 +32,18 @@
 
 /* Begin PBXFileReference section */
 		8F4394F21623782C008296CC /* CS564-BufferManager */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "CS564-BufferManager"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8F4394F61623782C008296CC /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		8F4394F81623782D008296CC /* CS564_BufferManager.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = CS564_BufferManager.1; sourceTree = "<group>"; };
+		8F439513162378A8008296CC /* buf.C */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = buf.C; sourceTree = "<group>"; };
+		8F439514162378A8008296CC /* buf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buf.h; sourceTree = "<group>"; };
+		8F439515162378A8008296CC /* bufHash.C */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bufHash.C; sourceTree = "<group>"; };
+		8F439516162378A8008296CC /* db.C */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = db.C; sourceTree = "<group>"; };
+		8F439517162378A8008296CC /* db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = db.h; sourceTree = "<group>"; };
+		8F439518162378A8008296CC /* error.C */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = error.C; sourceTree = "<group>"; };
+		8F439519162378A8008296CC /* error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
+		8F43951A162378A8008296CC /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		8F43951B162378A8008296CC /* page.C */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = page.C; sourceTree = "<group>"; };
+		8F43951C162378A8008296CC /* page.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = page.h; sourceTree = "<group>"; };
+		8F43951D162378A8008296CC /* testbuf.C */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testbuf.C; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +76,17 @@
 		8F4394F51623782C008296CC /* CS564-BufferManager */ = {
 			isa = PBXGroup;
 			children = (
-				8F4394F61623782C008296CC /* main.cpp */,
+				8F439513162378A8008296CC /* buf.C */,
+				8F439514162378A8008296CC /* buf.h */,
+				8F439515162378A8008296CC /* bufHash.C */,
+				8F439516162378A8008296CC /* db.C */,
+				8F439517162378A8008296CC /* db.h */,
+				8F439518162378A8008296CC /* error.C */,
+				8F439519162378A8008296CC /* error.h */,
+				8F43951A162378A8008296CC /* makefile */,
+				8F43951B162378A8008296CC /* page.C */,
+				8F43951C162378A8008296CC /* page.h */,
+				8F43951D162378A8008296CC /* testbuf.C */,
 				8F4394F81623782D008296CC /* CS564_BufferManager.1 */,
 			);
 			path = "CS564-BufferManager";
@@ -117,7 +143,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F4394F71623782C008296CC /* main.cpp in Sources */,
+				8F43951E162378A8008296CC /* buf.C in Sources */,
+				8F43951F162378A8008296CC /* bufHash.C in Sources */,
+				8F439520162378A8008296CC /* db.C in Sources */,
+				8F439521162378A8008296CC /* error.C in Sources */,
+				8F439522162378A8008296CC /* makefile in Sources */,
+				8F439523162378A8008296CC /* page.C in Sources */,
+				8F439524162378A8008296CC /* testbuf.C in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
