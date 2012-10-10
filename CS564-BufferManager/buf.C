@@ -123,7 +123,7 @@ const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
     // frame number = lookup(PageNo)
     // if frame number == HASHNOTFOUND
     //      if OK == allocBuf()
-    //           method file->readPage(É)
+    //           method file->readPage(ï¿½)
     //           insert(file, pageNo, frame number)
     //           set()
     //      return pointer to the frame (via page parameter).
@@ -139,18 +139,37 @@ const Status BufMgr::unPinPage(File* file, const int PageNo,
 			       const bool dirty) 
 {
     // 10/8 DM: pseudo code
+    // 10/10 DM: implemented function
 
-    // find frame containing (file,PageNo)
+    //Status rtnStatus = OK;
+    int frameNo;
+
+    // find frame containing (file,PageNo) (done using lookup)
     // if not found
     //      return HASHNOTFOUND
+    if(HASHNOTFOUND == lookup(file, PageNo, frameNo){
+        return HASHNOTFOUND;
+    }
+
     // if pinCnt == 0
     //      return PAGENOTPINNED
+    if (bufTable[frameNo].pinCnt <= 0){
+        return PAGENOTPINNED;
+    }
     // else
     //      decrement pinCnt of the frame containing(file, PageNo)
+    else{
+        bufTable[frameNo].pinCnt --;
+    }
+
     // if dirty == true
     //      set dirty bit
+    if(dirty){
+        bufTable[frameNo].dirty = 1;
+    }
+    
     // return OK
-
+    return OK;
 
 }
 
