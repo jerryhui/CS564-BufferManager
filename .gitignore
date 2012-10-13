@@ -1,2 +1,6 @@
 
 CS564-BufferManager.xcodeproj/project.xcworkspace/xcuserdata/JerryHui.xcuserdatad/UserInterfaceState.xcuserstate
+
+*.xcexplist
+
+*.xcbkptlist

@@ -7,6 +7,7 @@
 #include "page.h"
 #include "buf.h"
 
+#define DEBUGBUF
 
 #define CALL(c)    { Status s; \
                      if ((s = c) != OK) { \

@@ -84,7 +84,7 @@ const Status BufMgr::allocBuf(int & frame)
             return OK;
         }
         
-        if (!bufTable[clockHand].refbit) {
+        if (bufTable[clockHand].refbit) {
             // clear refbit
             bufTable[clockHand].refbit = false;
         } else {
@@ -200,8 +200,7 @@ const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page)
     // set(file, newPageNumber)    
     // return OK
 
-    int newPageNumber;
-    if(UNIXERR == file->allocatePage(newPageNumber)){
+    if(UNIXERR == file->allocatePage(pageNo)){
         return UNIXERR;
     }
     
@@ -210,11 +209,11 @@ const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page)
         return BUFFEREXCEEDED;
     }
 
-    if(HASHTBLERROR == bufTable->insert(file, newPageNumber, openFrameNumber)){
+    if(HASHTBLERROR == hashTable->insert(file, pageNo, openFrameNo)){
         return HASHTBLERROR;
     }
     
-    bufTable->set(file, newPageNumber);
+    bufTable[openFrameNo].Set(file, pageNo);
     return OK;
 }
 
