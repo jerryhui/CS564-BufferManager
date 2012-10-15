@@ -72,7 +72,6 @@ BufMgr::~BufMgr() {
 
 const Status BufMgr::allocBuf(int & frame)
 {
-  // advanceClock();
     int allocCount = 0;
     advanceClock();
     Status rtnStatus=OK;
@@ -89,10 +88,10 @@ const Status BufMgr::allocBuf(int & frame)
         }
         
         if (bufTable[clockHand].refbit) {
-            // clear refbit
+            // clear refbit, then move to next frame
             bufTable[clockHand].refbit = false;
 
-	    advanceClock();
+            advanceClock();
         } else {
             if (bufTable[clockHand].pinCnt==0) {
                 // no process is referencing this page
@@ -109,9 +108,10 @@ const Status BufMgr::allocBuf(int & frame)
                     //      BADPAGENO or BADPAGEPTR
                 }
 
-                // remove page from hashtable
+                // remove page from hashtable since it won't be stored anymore!
                 hashTable->remove(bufTable[clockHand].file, bufTable[clockHand].pageNo);
                 
+                // return frame
                 frame = clockHand;
                 bufTable[frame].Clear();
 
@@ -132,6 +132,7 @@ const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
     int frameNo;
     Status rtn=OK;
 
+    // lookup() may 
     rtn = hashTable->lookup(file, PageNo, frameNo);
     if (rtn == OK) {
         // page is already in buffer
@@ -178,18 +179,22 @@ const Status BufMgr::unPinPage(File* file, const int PageNo,
     //Status rtnStatus = OK;
 
     int frameNo;
-
+    
+    //get the frameNo of the file and pageNo if it's in the buffer, else return HASHNOTFOUND
     if(HASHNOTFOUND == hashTable->lookup(file, PageNo, frameNo)){
         return HASHNOTFOUND;
     }
-
+    
+    //once frame found, check if page is already unpinned
     if (bufTable[frameNo].pinCnt <= 0){
         return PAGENOTPINNED;
     }
+    //else decrement the pin count
     else{
         bufTable[frameNo].pinCnt--;
     }
-
+    
+    //set the dirty bit if requested by the caller
     if(dirty){
         bufTable[frameNo].dirty = true; // JH: better set bool explicitly to true/false instead
     }
@@ -209,20 +214,24 @@ const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page)
     // if hashtable error, return HASHTBLERROR
     // set(file, newPageNumber)    
     // return OK
-
+    
+    //create a new page in the file and return a UNIXERR if function fails
     if(UNIXERR == file->allocatePage(pageNo)){
         return UNIXERR;
     }
     
+    //get an open frame using allocBuf
     int openFrameNo;
     if(BUFFEREXCEEDED == allocBuf(openFrameNo)){
         return BUFFEREXCEEDED;
     }
 
+    //insert a page into the open frame and update hashtable
     if(HASHTBLERROR == hashTable->insert(file, pageNo, openFrameNo)){
         return HASHTBLERROR;
     }
 
+    //setup frame
     bufTable[openFrameNo].Set(file, pageNo);
     page = &bufPool[openFrameNo];
     return OK;
