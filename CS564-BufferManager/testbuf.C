@@ -7,7 +7,6 @@
 #include "page.h"
 #include "buf.h"
 
-#define DEBUGBUF
 
 #define CALL(c)    { Status s; \
                      if ((s = c) != OK) { \
@@ -119,12 +118,17 @@ int main()
 
     for (i = 0; i < num/3; i++) 
     {
+      cout << "\n*** pass " << i << " ***\n";
+
       CALL(bufMgr->allocPage(file2, pageno2, page2));
+      cout << "\ntest.2 allocated p." << pageno2; //debug JH
       sprintf((char*)page2, "test.2 Page %d %7.1f", pageno2, (float)pageno2);
       CALL(bufMgr->allocPage(file3, pageno3, page3));
+      cout << "\ntest.3 allocated p." << pageno3; //debug JH
       sprintf((char*)page3, "test.3 Page %d %7.1f", pageno3, (float)pageno3);
       pageno = j[random() % num];
       CALL(bufMgr->readPage(file1, pageno, page));
+      cout << "\ntest.1 read p." << pageno;
       sprintf((char*)&cmp, "test.1 Page %d %7.1f", pageno, (float)pageno);
       ASSERT(memcmp(page, &cmp, strlen((char*)&cmp)) == 0);
       cout << (char*)page << endl;
@@ -149,7 +153,7 @@ int main()
 
 #ifdef DEBUGBUF
     bufMgr->printSelf();
-#endif DEBUGBUF
+#endif
 
     cout << "\nReading \"test.1\"...\n";
     cout << "Expected Result: ";
@@ -224,7 +228,7 @@ int main()
 
 #ifdef DEBUGBUF
     bufMgr->printSelf();
-#endif DEBUGBUF
+#endif
 
     for (i = 0; i < num; i++)
       CALL(bufMgr->unPinPage(file4, i+2, true));

@@ -141,7 +141,8 @@ const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
 
     cout << "\n\t\treadPage() p." << PageNo;// JH debug
 
-    if (hashTable->lookup(file, PageNo, frameNo) == OK) {
+    rtn = hashTable->lookup(file, PageNo, frameNo);
+    if (rtn == OK) {
         // page is already in buffer
       cout << " in buffer."; // JH 10/15: debug
         
@@ -153,14 +154,15 @@ const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
         // page is not in the buffer
         
         rtn = allocBuf(frameNo);
-	cout << " not in buffer. Reading to frame " << frameNo;
+	cout << " not in buffer. Reading to frame " << frameNo << '\n';
         if (rtn == OK) {
-            if (file->readPage(PageNo, &bufPool[frameNo])==OK) {
-                hashTable->insert(file, PageNo, frameNo);
+	  rtn = file->readPage(PageNo, &bufPool[frameNo]);
+            if (rtn==OK) {
+                rtn = hashTable->insert(file, PageNo, frameNo);
                 bufTable[frameNo].Set(file, PageNo);
                 
                 page = &bufPool[frameNo];
-		cout << "\n\treadPage(): returning p." << PageNo << " in frame "<<frameNo;
+		cout << "\n\treadPage(): returning p." << PageNo << " in frame "<<frameNo << '\n';
             }
         }
     }
