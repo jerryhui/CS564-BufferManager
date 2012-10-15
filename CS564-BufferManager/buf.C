@@ -70,8 +70,9 @@ BufMgr::~BufMgr() {
 // - !!Bookkeeping left for those who called allocBuf to do!!
 const Status BufMgr::allocBuf(int & frame)
 {
+  // advanceClock();
+    int allocCount = 0; // JH 10/15: try counting attempts for stop condition
     advanceClock();
-    int startClock = clockHand; // remembers where we start
     Status rtnStatus=OK;
     
     do {
@@ -81,12 +82,20 @@ const Status BufMgr::allocBuf(int & frame)
         if (!bufTable[clockHand].valid) {
             frame = clockHand;
             bufTable[frame].Clear();
+	    
+	    // JH 10/15: debug
+	    cout << "\n\tallocBuf()-frame "<<frame<<" is available.";
             return OK;
         }
         
         if (bufTable[clockHand].refbit) {
             // clear refbit
             bufTable[clockHand].refbit = false;
+
+	    // JH 10/15: debug
+	    // cout << "\n\tallocBuf()-frame "<< clockHand <<" refbit cleared.";	    
+	    advanceClock();
+	    // cout << "\n\tallocBuf()-clock advanced to " << clockHand;
         } else {
             if (bufTable[clockHand].pinCnt==0) {
                 // no process is referencing this page
@@ -105,12 +114,13 @@ const Status BufMgr::allocBuf(int & frame)
                 
                 frame = clockHand;
                 bufTable[frame].Clear();
+		// JH 10/15: debug
+		cout << "\n\tallocBuf()-frame "<<frame<<" is reset and used.";
+
                 return OK;
             }
-        }
-        
-        advanceClock();
-    } while (clockHand != startClock);
+        }       
+    } while (allocCount++ <= numBufs);
     
     // all pages are pinned
     return BUFFEREXCEEDED;
@@ -214,6 +224,7 @@ const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page)
     }
     
     bufTable[openFrameNo].Set(file, pageNo);
+    page = &bufPool[openFrameNo];
     return OK;
 }
 
