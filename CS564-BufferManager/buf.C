@@ -67,11 +67,13 @@ BufMgr::~BufMgr() {
 // 10/10 JH:
 // - Implemented function
 // - May still need to handle errors from File::writePage()
-// - !!Bookkeeping left for those who called allocBuf to do!!
+// 10/15 JH:
+// - try counting attempts for stop condition
+
 const Status BufMgr::allocBuf(int & frame)
 {
   // advanceClock();
-    int allocCount = 0; // JH 10/15: try counting attempts for stop condition
+    int allocCount = 0;
     advanceClock();
     Status rtnStatus=OK;
     
@@ -83,8 +85,6 @@ const Status BufMgr::allocBuf(int & frame)
             frame = clockHand;
             bufTable[frame].Clear();
 	    
-	    // JH 10/15: debug
-	    // cout << "\n\tallocBuf()-frame "<<frame<<" is available.";
             return OK;
         }
         
@@ -92,15 +92,10 @@ const Status BufMgr::allocBuf(int & frame)
             // clear refbit
             bufTable[clockHand].refbit = false;
 
-	    // JH 10/15: debug
-	    // cout << "\n\tallocBuf()-frame "<< clockHand <<" refbit cleared.";	    
 	    advanceClock();
-	    // cout << "\n\tallocBuf()-clock advanced to " << clockHand;
         } else {
             if (bufTable[clockHand].pinCnt==0) {
                 // no process is referencing this page
-	      cout << "\n\tallocPage()-dumping p." << bufTable[clockHand].pageNo << '\n';
-	      // debug
  
                 if (bufTable[clockHand].dirty) {
                     // write back to disk
@@ -114,13 +109,11 @@ const Status BufMgr::allocBuf(int & frame)
                     //      BADPAGENO or BADPAGEPTR
                 }
 
-		// JH need to remove item from hashtable
-		hashTable->remove(bufTable[clockHand].file, bufTable[clockHand].pageNo);
+                // remove page from hashtable
+                hashTable->remove(bufTable[clockHand].file, bufTable[clockHand].pageNo);
                 
                 frame = clockHand;
                 bufTable[frame].Clear();
-		// JH 10/15: debug
-		// cout << "\n\tallocBuf()-frame "<<frame<<" is reset and used.";
 
                 return OK;
             }
@@ -139,12 +132,9 @@ const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
     int frameNo;
     Status rtn=OK;
 
-    cout << "\n\t\treadPage() p." << PageNo;// JH debug
-
     rtn = hashTable->lookup(file, PageNo, frameNo);
     if (rtn == OK) {
         // page is already in buffer
-      cout << " in buffer."; // JH 10/15: debug
         
         bufTable[frameNo].pinCnt++;
         bufTable[frameNo].refbit = true;
@@ -154,15 +144,13 @@ const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
         // page is not in the buffer
         
         rtn = allocBuf(frameNo);
-	cout << " not in buffer. Reading to frame " << frameNo << '\n';
         if (rtn == OK) {
-	  rtn = file->readPage(PageNo, &bufPool[frameNo]);
+            rtn = file->readPage(PageNo, &bufPool[frameNo]);
             if (rtn==OK) {
                 rtn = hashTable->insert(file, PageNo, frameNo);
                 bufTable[frameNo].Set(file, PageNo);
                 
                 page = &bufPool[frameNo];
-		cout << "\n\treadPage(): returning p." << PageNo << " in frame "<<frameNo << '\n';
             }
         }
     }
@@ -225,19 +213,15 @@ const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page)
     if(UNIXERR == file->allocatePage(pageNo)){
         return UNIXERR;
     }
-    //cout << "\n\tallocPage(): new page " << pageNo; // JH 10/15: debug
     
     int openFrameNo;
     if(BUFFEREXCEEDED == allocBuf(openFrameNo)){
         return BUFFEREXCEEDED;
     }
-    //cout << "\n\t\tusing buffer frame " << openFrameNo;
 
     if(HASHTBLERROR == hashTable->insert(file, pageNo, openFrameNo)){
         return HASHTBLERROR;
     }
-    //cout << "\n\t\thash table updated.";
-    // JH debug
 
     bufTable[openFrameNo].Set(file, pageNo);
     page = &bufPool[openFrameNo];
