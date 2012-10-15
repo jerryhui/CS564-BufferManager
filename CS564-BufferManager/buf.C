@@ -132,7 +132,6 @@ const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
     int frameNo;
     Status rtn=OK;
 
-    // lookup() may 
     rtn = hashTable->lookup(file, PageNo, frameNo);
     if (rtn == OK) {
         // page is already in buffer
@@ -156,6 +155,11 @@ const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
         }
     }
 
+    // Returns OK
+    // Possible error statuses:
+    // - BufHashTbl::lookup() may return HASHTBLERROR
+    // - File::readPage() may return UNIXERR
+    // - BufMgr::allocPage() may return BUFFEREXCEEDED
     return rtn;
 }
 
